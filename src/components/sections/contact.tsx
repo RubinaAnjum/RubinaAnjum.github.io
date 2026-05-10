@@ -48,10 +48,16 @@ export function Contact() {
     setStatus("submitting");
 
     try {
-      const res = await fetch("/api/contact", {
+      const res = await fetch("https://formspree.io/f/xaqvlzod", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(parsed.data),
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          name: parsed.data.name,
+          email: parsed.data.email,
+          phone: parsed.data.phone || "",
+          message: parsed.data.query,
+          _subject: `Portfolio inquiry from ${parsed.data.name}`,
+        }),
       });
       if (!res.ok) {
         const j = await res.json().catch(() => ({}));
