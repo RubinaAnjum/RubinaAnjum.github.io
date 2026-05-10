@@ -1,15 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Menu, X } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { navLinks } from "@/content/nav";
 import { profile } from "@/content/profile";
 import { cn } from "@/lib/utils";
 
 export function Nav() {
   const [scrolled, setScrolled] = useState(false);
-  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -27,8 +25,8 @@ export function Nav() {
         "fixed top-0 inset-x-0 z-50 transition-all duration-300 print:hidden",
         scrolled ? "py-2" : "py-4",
       )}
+      style={{ overflowX: "clip" }}
     >
-      {/* Full-width frosted backdrop — blurs page content beneath the header on scroll */}
       <div
         aria-hidden
         className={cn(
@@ -48,16 +46,17 @@ export function Nav() {
         }}
       />
 
-      <div className="relative mx-auto max-w-6xl px-4">
+      <div className="relative mx-auto max-w-6xl px-3">
         <div
           className={cn(
-            "flex items-center justify-between rounded-full px-4 py-2.5 transition-all duration-500",
+            "flex w-full items-center gap-2 rounded-full px-3 py-2 transition-all duration-500",
             scrolled ? "border border-white/10 bg-white/[0.04]" : "glass",
           )}
         >
+          {/* Logo */}
           <a
             href="#"
-            className="group flex items-center gap-2 font-mono text-sm font-medium tracking-tight"
+            className="group flex shrink-0 items-center gap-2 font-mono text-sm font-medium tracking-tight"
           >
             <span className="relative flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-cyan to-violet text-background font-bold text-xs">
               {profile.initials}
@@ -68,68 +67,31 @@ export function Nav() {
             </span>
           </a>
 
-          <nav className="hidden md:flex items-center gap-1">
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className="rounded-full px-4 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5 transition-colors"
-              >
-                {link.label}
-              </a>
-            ))}
-          </nav>
-
-          <a
-            href={profile.resumeUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden md:inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-cyan via-violet to-pink px-4 py-1.5 text-xs font-medium text-background shadow-[0_0_24px_-6px_rgba(168,85,247,0.7)] hover:shadow-[0_0_28px_-2px_rgba(34,211,238,0.6)] transition-shadow"
-          >
-            Resume
-          </a>
-
-          <button
-            type="button"
-            onClick={() => setOpen((v) => !v)}
-            aria-label={open ? "Close menu" : "Open menu"}
-            aria-expanded={open}
-            className="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-full hover:bg-white/5 transition-colors"
-          >
-            {open ? <X size={18} /> : <Menu size={18} />}
-          </button>
-        </div>
-
-        <AnimatePresence>
-          {open && (
-            <motion.div
-              initial={{ opacity: 0, y: -8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.2 }}
-              className="md:hidden mt-2 glass-strong rounded-2xl p-2"
-            >
+          {/* Scrollable nav — flex-1 wrapper clips, inner div scrolls */}
+          <div className="flex-1 min-w-0 overflow-hidden">
+            <nav className="flex items-center gap-0.5 overflow-x-auto scrollbar-none px-1">
               {navLinks.map((link) => (
                 <a
                   key={link.href}
                   href={link.href}
-                  onClick={() => setOpen(false)}
-                  className="block rounded-xl px-4 py-3 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5 transition-colors"
+                  className="whitespace-nowrap rounded-full px-3 py-1.5 text-xs sm:text-sm text-muted-foreground hover:text-foreground hover:bg-white/5 transition-colors"
                 >
                   {link.label}
                 </a>
               ))}
-              <a
-                href={profile.resumeUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-1 block rounded-xl bg-gradient-to-r from-cyan via-violet to-pink px-4 py-3 text-center text-sm font-medium text-background"
-              >
-                View Resume
-              </a>
-            </motion.div>
-          )}
-        </AnimatePresence>
+            </nav>
+          </div>
+
+          {/* Resume button */}
+          <a
+            href={profile.resumeUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="shrink-0 inline-flex items-center rounded-full bg-gradient-to-r from-cyan via-violet to-pink px-3 py-1.5 text-xs font-medium text-background shadow-[0_0_24px_-6px_rgba(168,85,247,0.7)] hover:shadow-[0_0_28px_-2px_rgba(34,211,238,0.6)] transition-shadow"
+          >
+            Resume
+          </a>
+        </div>
       </div>
     </motion.header>
   );
