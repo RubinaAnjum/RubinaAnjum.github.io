@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowDown, ArrowRight, ExternalLink, Mail, Phone, Sparkles } from "lucide-react";
 import { IconGithub, IconLinkedin } from "@/components/icons/brand";
@@ -26,10 +26,9 @@ const socialIconMap: Record<SocialIcon, IconCmp> = {
 
 export function Hero() {
   const [roleIndex, setRoleIndex] = useState(0);
-  const [mounted, setMounted] = useState(false);
+  const mounted = useSyncExternalStore(() => () => {}, () => true, () => false);
 
   useEffect(() => {
-    setMounted(true);
     const id = setInterval(() => {
       setRoleIndex((i) => (i + 1) % profile.roles.length);
     }, 2400);

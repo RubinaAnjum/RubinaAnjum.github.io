@@ -1,26 +1,26 @@
 "use client";
 
-import { Suspense, useMemo, useRef } from "react";
+import { Suspense, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Points, PointMaterial } from "@react-three/drei";
 import * as THREE from "three";
 
-function Nebula({ count = 1500 }: { count?: number }) {
-  const ref = useRef<THREE.Points>(null);
+const STAR_POSITIONS = (() => {
+  const count = 1500;
+  const arr = new Float32Array(count * 3);
+  for (let i = 0; i < count; i++) {
+    const r = 2.4 + Math.random() * 1.0;
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.acos(2 * Math.random() - 1);
+    arr[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+    arr[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta) * 0.85;
+    arr[i * 3 + 2] = r * Math.cos(phi);
+  }
+  return arr;
+})();
 
-  const positions = useMemo(() => {
-    const arr = new Float32Array(count * 3);
-    for (let i = 0; i < count; i++) {
-      // thin, far shell — particles read as distant stardust
-      const r = 2.4 + Math.random() * 1.0;
-      const theta = Math.random() * Math.PI * 2;
-      const phi = Math.acos(2 * Math.random() - 1);
-      arr[i * 3] = r * Math.sin(phi) * Math.cos(theta);
-      arr[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta) * 0.85;
-      arr[i * 3 + 2] = r * Math.cos(phi);
-    }
-    return arr;
-  }, [count]);
+function Nebula() {
+  const ref = useRef<THREE.Points>(null);
 
   useFrame((_state, delta) => {
     if (!ref.current) return;
@@ -28,7 +28,7 @@ function Nebula({ count = 1500 }: { count?: number }) {
   });
 
   return (
-    <Points ref={ref} positions={positions} stride={3} frustumCulled={false}>
+    <Points ref={ref} positions={STAR_POSITIONS} stride={3} frustumCulled={false}>
       <PointMaterial
         transparent
         color="#8b9bff"

@@ -1,29 +1,30 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { motion, useMotionValue, useSpring, useReducedMotion } from "framer-motion";
 
 export function CursorGlow() {
-  const [enabled, setEnabled] = useState(false);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const sx = useSpring(x, { stiffness: 180, damping: 20 });
   const sy = useSpring(y, { stiffness: 180, damping: 20 });
   const reduced = useReducedMotion();
+  const isFinePointer = useSyncExternalStore(
+    () => () => {},
+    () => window.matchMedia("(pointer: fine)").matches,
+    () => false,
+  );
+  const enabled = !reduced && isFinePointer;
 
   useEffect(() => {
-    if (reduced) return;
-    const isFinePointer = window.matchMedia("(pointer: fine)").matches;
-    if (!isFinePointer) return;
-    setEnabled(true);
-
+    if (!enabled) return;
     const onMove = (e: MouseEvent) => {
       x.set(e.clientX - 200);
       y.set(e.clientY - 200);
     };
     window.addEventListener("mousemove", onMove);
     return () => window.removeEventListener("mousemove", onMove);
-  }, [reduced, x, y]);
+  }, [enabled, x, y]);
 
   if (!enabled) return null;
 

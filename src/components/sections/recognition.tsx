@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Award as AwardIcon, BadgeCheck, ExternalLink, Trophy } from "lucide-react";
+import { BadgeCheck, ExternalLink, Trophy } from "lucide-react";
 import {
   awards,
   certifications,
